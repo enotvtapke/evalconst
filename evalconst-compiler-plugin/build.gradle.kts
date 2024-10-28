@@ -10,6 +10,8 @@ repositories {
 }
 
 dependencies {
+    compileOnly("org.jetbrains.kotlin:kotlin-compiler-embeddable")
+
     testImplementation(kotlin("test"))
 }
 

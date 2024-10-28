@@ -1,6 +1,4 @@
 rootProject.name = "evalconst"
 
-include(":evalconst-gradle-plugin")
-include(":evalconst-compiler-plugin")
 include("evalconst-compiler-plugin")
-include("evalconst-gradle-plugin")
+includeBuild("evalconst-gradle-plugin")
