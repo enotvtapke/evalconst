@@ -1,5 +1,6 @@
 package com.github.enotvtapke
 
+import com.google.auto.service.AutoService
 import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
@@ -15,6 +16,7 @@ object EvalConstConfigurationKeys {
 }
 
 @OptIn(ExperimentalCompilerApi::class)
+//@AutoService(CommandLineProcessor::class)
 class EvalConstCommandLineProcessor : CommandLineProcessor {
     companion object {
         val PREFIX_OPTION = CliOption(

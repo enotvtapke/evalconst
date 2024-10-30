@@ -1,5 +1,6 @@
 package com.github.enotvtapke
 
+import com.github.enotvtapke.compiler.EvalConstIrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionStorage
@@ -7,6 +8,7 @@ import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CompilerConfiguration
 
 @OptIn(ExperimentalCompilerApi::class)
+//@AutoService(CompilerPluginRegistrar::class)
 class EvalConstComponentRegistrar : CompilerPluginRegistrar() {
     override val supportsK2: Boolean
         get() = true
