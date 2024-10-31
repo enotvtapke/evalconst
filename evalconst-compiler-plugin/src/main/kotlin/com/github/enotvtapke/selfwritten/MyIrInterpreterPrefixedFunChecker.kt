@@ -1,9 +1,12 @@
 package com.github.enotvtapke.selfwritten
 
+import org.jetbrains.kotlin.ir.BuiltInOperatorNames
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrBranch
 import org.jetbrains.kotlin.ir.expressions.IrBreak
@@ -21,9 +24,11 @@ import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.types.isUnsignedType
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.Name
 
 class MyIrInterpreterPrefixedFunChecker(
     private val prefix: String,
@@ -39,16 +44,23 @@ class MyIrInterpreterPrefixedFunChecker(
     private val allowedMethodsOnStrings = setOf(
         "<get-length>", "plus", "get", "compareTo", "equals", "toString"
     )
+    private val allowedBuiltinExtensionFunctions = listOf(
+        BuiltInOperatorNames.LESS, BuiltInOperatorNames.LESS_OR_EQUAL,
+        BuiltInOperatorNames.GREATER, BuiltInOperatorNames.GREATER_OR_EQUAL,
+        BuiltInOperatorNames.EQEQ, BuiltInOperatorNames.IEEE754_EQUALS,
+        BuiltInOperatorNames.ANDAND, BuiltInOperatorNames.OROR
+    ).map { IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier(it)).asString() }.toSet()
 
     fun canEvaluateFunction(function: IrFunction): Boolean {
         val returnType = function.returnType
         if (!returnType.isPrimitiveType() && !returnType.isString() && !returnType.isUnsignedType()) return false // TODO remove?
 
         val parentType = function.parentClassOrNull?.defaultType
+        val fName = function.name.asString()
         return when {
-            parentType == null -> false
-            parentType.isPrimitiveType() -> function.name.asString() in allowedMethodsOnPrimitives
-            parentType.isString() -> function.name.asString() in allowedMethodsOnStrings
+            parentType == null -> function.fqNameWhenAvailable?.asString() in allowedBuiltinExtensionFunctions
+            parentType.isPrimitiveType() -> fName in allowedMethodsOnPrimitives
+            parentType.isString() -> fName in allowedMethodsOnStrings
             else -> false
         }
     }
@@ -122,6 +134,10 @@ class MyIrInterpreterPrefixedFunChecker(
 
     override fun visitBody(body: IrBody, data: Unit): Boolean {
         return visitStatements(body.statements, data)
+    }
+
+    override fun visitBlock(expression: IrBlock, data: Unit): Boolean {
+        return visitStatements(expression.statements, data)
     }
 
     override fun visitReturn(expression: IrReturn, data: Unit): Boolean {

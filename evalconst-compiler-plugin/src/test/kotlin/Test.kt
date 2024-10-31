@@ -31,6 +31,7 @@ class Test {
     fun loopsTest() {
         val result = compile(readTestFile("loops.kt"))
         val code = result.javaCode("MainKt")
+        println(code)
     }
 
     @Test
@@ -40,17 +41,26 @@ class Test {
     }
 
     @Test
+    fun conditionsTest() {
+        val result = compile(readTestFile("conditions.kt"))
+        val code = result.javaCode("MainKt")
+        println(code)
+    }
+
+    @Test
     fun nestedFunTest() {
 //        println(Int::class. members.find { it.name == "and" }?.call(1, 2))
 //        Class.forName("kotlin.Int").getDeclaredMethod("plus", Int::class.java)
         val result = compile(readTestFile("nested_fun.kt"))
         val code = result.javaCode("MainKt")
+        println(code)
     }
 
     @Test
     fun recursionTest() {
         val result = compile(readTestFile("recursion.kt"))
         val code = result.javaCode("MainKt")
+        println(code)
     }
 
     private fun compile(sourceFile: String): Result =
