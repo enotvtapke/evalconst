@@ -9,8 +9,9 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 
 object EvalConstConfigurationKeys {
-    val PREFIX: CompilerConfigurationKey<String> = CompilerConfigurationKey.create("prefix")
-    val EVAL_LIMIT: CompilerConfigurationKey<Int> = CompilerConfigurationKey.create("limit")
+    val PREFIX: CompilerConfigurationKey<String> = CompilerConfigurationKey.create("const-fun-prefix")
+    val STEP_NUMBER_LIMIT: CompilerConfigurationKey<Int> = CompilerConfigurationKey.create("step-limit")
+    val STACK_SIZE_LIMIT: CompilerConfigurationKey<Int> = CompilerConfigurationKey.create("stack-limit")
 }
 
 @OptIn(ExperimentalCompilerApi::class)
@@ -25,21 +26,30 @@ class EvalConstCommandLineProcessor : CommandLineProcessor {
         )
 
         val EVAL_LIMIT_OPTION = CliOption(
-            optionName = "limit",
+            optionName = "step-limit",
             valueDescription = "Int",
-            description = "Eval limit",
+            description = "Maximal number if statements that can be evaluated during compile-time const evaluation",
+            required = false,
+            allowMultipleOccurrences = false
+        )
+
+        val STACK_LIMIT_OPTION = CliOption(
+            optionName = "stack-limit",
+            valueDescription = "Int",
+            description = "Maximal stack size during compile-time const evaluation",
             required = false,
             allowMultipleOccurrences = false
         )
     }
 
     override val pluginId = "com.github.enotvtapke.evalconst"
-    override val pluginOptions = listOf(PREFIX_OPTION, EVAL_LIMIT_OPTION)
+    override val pluginOptions = listOf(PREFIX_OPTION, EVAL_LIMIT_OPTION, STACK_LIMIT_OPTION)
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) =
         when (option) {
             PREFIX_OPTION -> configuration.put(EvalConstConfigurationKeys.PREFIX, value)
-            EVAL_LIMIT_OPTION -> configuration.put(EvalConstConfigurationKeys.EVAL_LIMIT, value.toInt())
+            EVAL_LIMIT_OPTION -> configuration.put(EvalConstConfigurationKeys.STEP_NUMBER_LIMIT, value.toInt())
+            STACK_LIMIT_OPTION -> configuration.put(EvalConstConfigurationKeys.STACK_SIZE_LIMIT, value.toInt())
             else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
         }
 }

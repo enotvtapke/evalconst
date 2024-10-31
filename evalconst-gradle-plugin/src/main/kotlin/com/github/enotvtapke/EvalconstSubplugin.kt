@@ -19,8 +19,9 @@ class EvalconstSubplugin : KotlinCompilerPluginSupportPlugin {
         val extension = project.extensions.getByType(EvalconstExtension::class.java)
         return project.provider {
             listOf(
-                SubpluginOption(key = "constFunctionPrefix", value = extension.constFunctionPrefix),
-                SubpluginOption(key = "constEvalLimit", value = extension.constEvalLimit.toString()),
+                SubpluginOption(key = "const-fun-prefix", value = extension.constFunctionPrefix),
+                SubpluginOption(key = "step-Limit", value = extension.stepNumberLimit.toString()),
+                SubpluginOption(key = "stack-Limit", value = extension.stackSizeLimit.toString()),
             )
         }
     }

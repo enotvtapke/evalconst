@@ -33,12 +33,17 @@ fun IrFunctionAccessExpression.args(): List<IrExpression?> = listOfNotNull(dispa
 
 class ConstFunEvaluator(
     private val isEvalFunction: (IrFunction) -> Boolean,
-    private val stepLimit: Int, // TODO use it to restrict number of steps that can be done by evaluator
+    private val stepLimit: Int,
+    private val stackSizeLimit: Int,
 ) : IrElementVisitor<IrConst<*>, Unit> {
     private var env = EvalEnvironment()
+    private var statementNumber: Int = 0
 
     override fun visitCall(call: IrCall, state: Unit): IrConst<*> {
         val callee = call.symbol.owner
+
+        if (env.stackSize() > stackSizeLimit)
+            throw EvaluatorStackSizeException("Stack size exceeds configured limit `$stackSizeLimit`")
 
         return if (isEvalFunction(callee)) {
             val argsValues = call.valueArguments.map { it!!.accept(this, Unit) }
@@ -85,8 +90,19 @@ class ConstFunEvaluator(
         }
     }
 
-    override fun visitBody(body: IrBody, data: Unit): IrConst<*> = evalStatements(body.statements)
-    override fun visitBlock(block: IrBlock, data: Unit): IrConst<*> = evalStatements(block.statements)
+    override fun visitBody(body: IrBody, data: Unit): IrConst<*> = evalStatements(body.statements).also {
+        statementNumber += body.statements.size
+        if (statementNumber > stepLimit) {
+            throw EvaluatorStatementsLimitException("Number of evaluated statements exceeds configured limit `$stepLimit`")
+        }
+    }
+
+    override fun visitBlock(block: IrBlock, data: Unit): IrConst<*> = evalStatements(block.statements).also {
+        statementNumber += block.statements.size
+        if (statementNumber > stepLimit) {
+            throw EvaluatorStatementsLimitException("Number of evaluated statements exceeds configured limit `$stepLimit`")
+        }
+    }
 
     override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: Unit): IrConst<*> =
         env.inScope {

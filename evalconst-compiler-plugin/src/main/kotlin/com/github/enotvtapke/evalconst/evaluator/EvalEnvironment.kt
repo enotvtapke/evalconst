@@ -27,6 +27,8 @@ class EvalEnvironment {
 
     private val callStack: ArrayDeque<Scope> = ArrayDeque(listOf(Scope()))
 
+    fun stackSize() = callStack.size
+
     fun defineVar(name: Name, value: IrConst<*>) = callStack.last().defineVar(name, value)
     fun getVar(name: Name) = callStack.last().getVar(name)
     fun setVar(name: Name, value: IrConst<*>) = callStack.last().setVar(name, value)
