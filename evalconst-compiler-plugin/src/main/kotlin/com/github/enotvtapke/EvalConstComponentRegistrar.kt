@@ -1,6 +1,6 @@
 package com.github.enotvtapke
 
-import com.github.enotvtapke.compiler.EvalConstIrGenerationExtension
+import com.github.enotvtapke.selfwritten.EvalConstIrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionStorage

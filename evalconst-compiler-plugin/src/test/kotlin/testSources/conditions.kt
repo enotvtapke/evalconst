@@ -1,5 +1,5 @@
 fun main() {
-    fun isEven(a: Int): Boolean {
+    fun evalIsEven(a: Int): Boolean {
         if (a % 2 == 0) {
             return true
         } else {
@@ -7,7 +7,7 @@ fun main() {
         }
     }
 
-    fun isDigit(a: Int): Boolean {
+    fun evalIsDigit(a: Int): Boolean {
         when(a) {
             1 -> return true
             2 -> return true
@@ -23,9 +23,9 @@ fun main() {
         }
     }
 
-    println(isEven(83))
-    println(isDigit(2))
-    println(isDigit(13))
+    println(evalIsEven(83))
+    println(evalIsDigit(2))
+    println(evalIsDigit(13))
 }
 
 

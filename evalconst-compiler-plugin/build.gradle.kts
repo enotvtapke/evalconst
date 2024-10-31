@@ -13,6 +13,9 @@ dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.9.24")
     compileOnly("com.google.auto.service:auto-service-annotations:1.1.1")
 
+    runtimeOnly("org.jetbrains.kotlin:kotlin-reflect:1.9.24")
+    testImplementation("org.jetbrains.kotlin:kotlin-reflect:1.9.24")
+
     testImplementation(kotlin("test"))
     testImplementation("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.9.24")
     testImplementation("com.github.tschuchortdev:kotlin-compile-testing:1.6.0")

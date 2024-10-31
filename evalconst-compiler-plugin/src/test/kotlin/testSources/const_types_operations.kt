@@ -1,27 +1,28 @@
 fun main() {
-    fun sum(a: Int, b: Int): Int {
+    fun evalSum(a: Int, b: Int): Int {
         return a + b
     }
 
-    fun sub(a: Int, b: Int): Int {
+    fun evalSub(a: Int, b: Int): Int {
         return a - b
     }
 
-    fun not(b: Boolean): Boolean {
+    fun evalNot(b: Boolean): Boolean {
         return !b
     }
 
-    fun concat(a: String, b: String): String {
+    fun evalConcat(a: String, b: String): String {
         return a + b
     }
 
-    fun len(a: String): Int {
+    fun evalLen(a: String): Int {
         return a.length
     }
 
-    println(sum(1, 2))
-    println(sub(1, 2))
-    println(not(false))
-    println(concat("fiz", "buz"))
-    println(len("fiz"))
+    println(evalSum(1, 2))
+    println(evalSub(1, 2))
+    println(evalNot(false))
+    println(evalConcat("fiz", "buz"))
+    println(evalConcat("fiz", "buz").length)
+    println(evalLen("fiz"))
 }

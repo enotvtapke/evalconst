@@ -34,7 +34,15 @@ class Test {
     }
 
     @Test
+    fun miscTest() {
+        val result = compile(readTestFile("misc.kt"))
+        val code = result.javaCode("MainKt")
+    }
+
+    @Test
     fun nestedFunTest() {
+//        println(Int::class. members.find { it.name == "and" }?.call(1, 2))
+//        Class.forName("kotlin.Int").getDeclaredMethod("plus", Int::class.java)
         val result = compile(readTestFile("nested_fun.kt"))
         val code = result.javaCode("MainKt")
     }
@@ -58,13 +66,8 @@ private val main = SourceFile.kotlin(
             }
 
             fun evalLoop(i: Int): Int {
-                var r = 0
-                var j = 0
-                while (j < 10) {
-                    r += i
-                    j += 1
-                }
-                return r
+                1 + 1
+                return i
             }
         """
 )

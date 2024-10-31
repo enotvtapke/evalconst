@@ -1,6 +1,6 @@
 fun main() {
 
-    fun multiply(a: Int, b: Int): Int {
+    fun evalMultiply(a: Int, b: Int): Int {
         var i = 0
         var res = 0
         while (i < b) {
@@ -10,7 +10,7 @@ fun main() {
         return res
     }
 
-    fun nestedLoop(a: Int, b: Int): Int {
+    fun evalNestedLoop(a: Int, b: Int): Int {
         var r = 0
         var i = 0
         var j = 0
@@ -24,6 +24,6 @@ fun main() {
         return r
     }
 
-    println(multiply(5, 10))
-    println(nestedLoop(5, 10))
+    println(evalMultiply(5, 10))
+    println(evalNestedLoop(5, 10))
 }

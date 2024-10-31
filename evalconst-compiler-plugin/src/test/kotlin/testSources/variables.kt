@@ -1,9 +1,9 @@
 fun main() {
-    fun id(a: Int): Int {
+    fun evalId(a: Int): Int {
         val b = a
         var c = b
         return c
     }
 
-    println(id(1))
+    println(evalId(1))
 }
