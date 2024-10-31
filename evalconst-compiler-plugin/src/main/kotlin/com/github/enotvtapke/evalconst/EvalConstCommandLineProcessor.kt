@@ -1,4 +1,4 @@
-package com.github.enotvtapke
+package com.github.enotvtapke.evalconst
 
 import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOption

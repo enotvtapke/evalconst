@@ -1,6 +1,6 @@
-package com.github.enotvtapke.selfwritten
+package com.github.enotvtapke.evalconst
 
-import com.github.enotvtapke.selfwritten.evaluator.ConstFunEvaluator
+import com.github.enotvtapke.evalconst.evaluator.ConstFunEvaluator
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -8,7 +8,6 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import kotlin.math.exp
 
 class EvalConstFunIrGenerationExtension(private val prefix: String, private val stepLimit: Int) : IrGenerationExtension {
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {

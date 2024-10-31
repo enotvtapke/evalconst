@@ -7,6 +7,14 @@ fun main() {
         }
     }
 
+    fun evalNestedIf(a: Int): Boolean {
+        return if (a % 3 == 0) {
+            if (a % 7 == 0) {
+                true
+            } else false
+        } else false
+    }
+
     fun evalIsDigit(a: Int): Boolean {
         when(a) {
             1 -> return true
@@ -26,6 +34,8 @@ fun main() {
     println(evalIsEven(83))
     println(evalIsDigit(2))
     println(evalIsDigit(13))
+    println(evalNestedIf(21))
+    println(evalNestedIf(55))
 }
 
 

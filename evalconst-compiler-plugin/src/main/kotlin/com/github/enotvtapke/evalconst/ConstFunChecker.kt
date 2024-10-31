@@ -1,6 +1,6 @@
-package com.github.enotvtapke.selfwritten
+package com.github.enotvtapke.evalconst
 
-import com.github.enotvtapke.selfwritten.evaluator.args
+import com.github.enotvtapke.evalconst.evaluator.args
 import org.jetbrains.kotlin.ir.BuiltInOperatorNames
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement

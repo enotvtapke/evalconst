@@ -1,4 +1,4 @@
-import com.github.enotvtapke.EvalConstComponentRegistrar
+import com.github.enotvtapke.evalconst.EvalConstComponentRegistrar
 import com.strobel.assembler.InputTypeLoader
 import com.strobel.assembler.metadata.ArrayTypeLoader
 import com.strobel.assembler.metadata.CompositeTypeLoader

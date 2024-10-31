@@ -1,4 +1,4 @@
-package com.github.enotvtapke.selfwritten.evaluator
+package com.github.enotvtapke.evalconst.evaluator
 
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.name.Name
