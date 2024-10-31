@@ -1,6 +1,6 @@
 @file:Suppress("DEPRECATION", "DEPRECATION_ERROR", "UNCHECKED_CAST")
 
-package com.github.enotvtapke.selfwritten
+package com.github.enotvtapke.selfwritten.evaluator
 
 import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterMethodNotFoundError
 

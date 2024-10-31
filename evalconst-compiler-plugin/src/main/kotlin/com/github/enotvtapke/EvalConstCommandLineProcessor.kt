@@ -1,6 +1,5 @@
 package com.github.enotvtapke
 
-import com.google.auto.service.AutoService
 import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
@@ -11,12 +10,10 @@ import org.jetbrains.kotlin.config.CompilerConfigurationKey
 
 object EvalConstConfigurationKeys {
     val PREFIX: CompilerConfigurationKey<String> = CompilerConfigurationKey.create("prefix")
-
     val EVAL_LIMIT: CompilerConfigurationKey<Int> = CompilerConfigurationKey.create("limit")
 }
 
 @OptIn(ExperimentalCompilerApi::class)
-//@AutoService(CommandLineProcessor::class)
 class EvalConstCommandLineProcessor : CommandLineProcessor {
     companion object {
         val PREFIX_OPTION = CliOption(

@@ -13,18 +13,21 @@ class Test {
     fun funTest() {
         val result = compile(readTestFile("fun.kt"))
         val code = result.javaCode("MainKt")
+        println(code)
     }
 
     @Test
     fun variablesTest() {
         val result = compile(readTestFile("variables.kt"))
         val code = result.javaCode("MainKt")
+        println(code)
     }
 
     @Test
     fun constTypesOpsTest() {
         val result = compile(readTestFile("const_types_operations.kt"))
         val code = result.javaCode("MainKt")
+        println(code)
     }
 
     @Test
@@ -32,12 +35,6 @@ class Test {
         val result = compile(readTestFile("loops.kt"))
         val code = result.javaCode("MainKt")
         println(code)
-    }
-
-    @Test
-    fun miscTest() {
-        val result = compile(readTestFile("misc.kt"))
-        val code = result.javaCode("MainKt")
     }
 
     @Test
@@ -49,8 +46,6 @@ class Test {
 
     @Test
     fun nestedFunTest() {
-//        println(Int::class. members.find { it.name == "and" }?.call(1, 2))
-//        Class.forName("kotlin.Int").getDeclaredMethod("plus", Int::class.java)
         val result = compile(readTestFile("nested_fun.kt"))
         val code = result.javaCode("MainKt")
         println(code)
@@ -68,16 +63,3 @@ class Test {
             assertEquals(KotlinCompilation.ExitCode.OK, it.exitCode)
         }
 }
-
-private val main = SourceFile.kotlin(
-    "main.kt", """
-            fun main() {
-                println(evalLoop(5))
-            }
-
-            fun evalLoop(i: Int): Int {
-                1 + 1
-                return i
-            }
-        """
-)

@@ -1,5 +1,6 @@
 package com.github.enotvtapke.selfwritten
 
+import com.github.enotvtapke.selfwritten.evaluator.args
 import org.jetbrains.kotlin.ir.BuiltInOperatorNames
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
@@ -9,10 +10,8 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrBranch
-import org.jetbrains.kotlin.ir.expressions.IrBreak
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.expressions.IrContinue
 import org.jetbrains.kotlin.ir.expressions.IrDoWhileLoop
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
@@ -22,7 +21,6 @@ import org.jetbrains.kotlin.ir.expressions.IrWhen
 import org.jetbrains.kotlin.ir.expressions.IrWhileLoop
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.isString
-import org.jetbrains.kotlin.ir.types.isUnsignedType
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
@@ -30,59 +28,10 @@ import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 
-class MyIrInterpreterPrefixedFunChecker(
-    private val prefix: String,
+class ConstFunChecker(
+    private val isEvalFunction: (IrFunction) -> Boolean,
 ) : IrElementVisitor<Boolean, Unit> {
     private val callStack = mutableListOf<IrElement>()
-
-    private val allowedMethodsOnPrimitives = setOf(
-        "not", "unaryMinus", "unaryPlus", "inv",
-        "toString", "toChar", "toByte", "toShort", "toInt", "toLong", "toFloat", "toDouble",
-        "equals", "compareTo", "plus", "minus", "times", "div", "rem", "and", "or", "xor", "shl", "shr", "ushr",
-        "less", "lessOrEqual", "greater", "greaterOrEqual"
-    )
-    private val allowedMethodsOnStrings = setOf(
-        "<get-length>", "plus", "get", "compareTo", "equals", "toString"
-    )
-    private val allowedBuiltinExtensionFunctions = listOf(
-        BuiltInOperatorNames.LESS, BuiltInOperatorNames.LESS_OR_EQUAL,
-        BuiltInOperatorNames.GREATER, BuiltInOperatorNames.GREATER_OR_EQUAL,
-        BuiltInOperatorNames.EQEQ, BuiltInOperatorNames.IEEE754_EQUALS,
-        BuiltInOperatorNames.ANDAND, BuiltInOperatorNames.OROR
-    ).map { IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier(it)).asString() }.toSet()
-
-    fun canEvaluateFunction(function: IrFunction): Boolean {
-        val returnType = function.returnType
-        if (!returnType.isPrimitiveType() && !returnType.isString() && !returnType.isUnsignedType()) return false // TODO remove?
-
-        val parentType = function.parentClassOrNull?.defaultType
-        val fName = function.name.asString()
-        return when {
-            parentType == null -> function.fqNameWhenAvailable?.asString() in allowedBuiltinExtensionFunctions
-            parentType.isPrimitiveType() -> fName in allowedMethodsOnPrimitives
-            parentType.isString() -> fName in allowedMethodsOnStrings
-            else -> false
-        }
-    }
-
-    private inline fun IrElement.asVisited(crossinline block: () -> Boolean): Boolean {
-        callStack.add(this)
-        return block().also {
-            callStack.removeAt(callStack.lastIndex)
-        }
-    }
-
-    private fun visitStatements(statements: List<IrStatement>, data: Unit): Boolean {
-        return statements.all { it.accept(this, data) }
-    }
-
-    private fun visitBodyIfNeeded(irFunction: IrFunction, data: Unit): Boolean {
-        return irFunction.asVisited { irFunction.body?.accept(this@MyIrInterpreterPrefixedFunChecker, data) ?: true }
-    }
-
-    private fun visitValueArguments(expression: IrFunctionAccessExpression, data: Unit): Boolean {
-        return expression.args().none { it?.accept(this, data) == false }
-    }
 
     override fun visitConst(expression: IrConst<*>, data: Unit): Boolean {
         return true
@@ -105,24 +54,19 @@ class MyIrInterpreterPrefixedFunChecker(
     }
 
     override fun visitWhileLoop(loop: IrWhileLoop, data: Unit): Boolean {
-        return loop.asVisited {
+        return loop.visitWith {
             loop.condition.accept(this, data) && (loop.body?.accept(this, data) ?: true)
         }
     }
 
     override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: Unit): Boolean {
-        return loop.asVisited {
+        return loop.visitWith {
             loop.condition.accept(this, data) && (loop.body?.accept(this, data) ?: true)
         }
     }
 
-    override fun visitBreak(jump: IrBreak, data: Unit): Boolean = callStack.contains(jump.loop)
-
-    override fun visitContinue(jump: IrContinue, data: Unit): Boolean = callStack.contains(jump.loop)
-
     override fun visitCall(expression: IrCall, data: Unit): Boolean {
-        if (!expression.symbol.owner.name.asString().startsWith(prefix) && !canEvaluateFunction(expression.symbol.owner)) return false
-//        if (!expression.symbol.owner.name.asString().startsWith(prefix)) return false // TODO add arg type and return type checks?
+        if (!isEvalFunction(expression.symbol.owner) && !isPrimitiveFunction(expression.symbol.owner)) return false
         if (expression.symbol.owner in callStack) return true
 
         return visitValueArguments(expression, data) && visitBodyIfNeeded(expression.symbol.owner, data)
@@ -149,4 +93,49 @@ class MyIrInterpreterPrefixedFunChecker(
         element: IrElement,
         data: Unit
     ): Boolean = false
+
+    private inline fun IrElement.visitWith(crossinline block: () -> Boolean): Boolean {
+        callStack.add(this)
+        return block().also {
+            callStack.removeAt(callStack.lastIndex)
+        }
+    }
+
+    private fun visitStatements(statements: List<IrStatement>, data: Unit): Boolean =
+        statements.all { it.accept(this, data) }
+
+    private fun visitBodyIfNeeded(irFunction: IrFunction, data: Unit): Boolean =
+        irFunction.visitWith { irFunction.body?.accept(this@ConstFunChecker, data) ?: true }
+
+    private fun visitValueArguments(expression: IrFunctionAccessExpression, data: Unit): Boolean =
+        expression.args().none { it?.accept(this, data) == false }
+
+    private fun isPrimitiveFunction(function: IrFunction): Boolean {
+        val parentType = function.parentClassOrNull?.defaultType
+        val fName = function.name.asString()
+        return when {
+            parentType == null -> function.fqNameWhenAvailable?.asString() in allowedBuiltinExtensionFunctions
+            parentType.isPrimitiveType() -> fName in allowedMethodsOnPrimitives
+            parentType.isString() -> fName in allowedMethodsOnStrings
+            else -> false
+        }
+    }
+
+    private val allowedMethodsOnPrimitives = setOf(
+        "not", "unaryMinus", "unaryPlus", "inv",
+        "toString", "toChar", "toByte", "toShort", "toInt", "toLong", "toFloat", "toDouble",
+        "equals", "compareTo", "plus", "minus", "times", "div", "rem", "and", "or", "xor", "shl", "shr", "ushr",
+        "less", "lessOrEqual", "greater", "greaterOrEqual"
+    )
+
+    private val allowedMethodsOnStrings = setOf(
+        "<get-length>", "plus", "get", "compareTo", "equals", "toString"
+    )
+
+    private val allowedBuiltinExtensionFunctions = listOf(
+        BuiltInOperatorNames.LESS, BuiltInOperatorNames.LESS_OR_EQUAL,
+        BuiltInOperatorNames.GREATER, BuiltInOperatorNames.GREATER_OR_EQUAL,
+        BuiltInOperatorNames.EQEQ, BuiltInOperatorNames.IEEE754_EQUALS,
+        BuiltInOperatorNames.ANDAND, BuiltInOperatorNames.OROR
+    ).map { IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier(it)).asString() }.toSet()
 }
