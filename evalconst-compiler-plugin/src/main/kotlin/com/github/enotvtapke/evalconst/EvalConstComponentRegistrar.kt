@@ -14,7 +14,7 @@ class EvalConstComponentRegistrar : CompilerPluginRegistrar() {
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         val prefix = configuration.get(EvalConstConfigurationKeys.PREFIX) ?: "eval"
         val stepLimit = configuration.get(EvalConstConfigurationKeys.STEP_NUMBER_LIMIT) ?: 1_000_000
-        val stackSizeLimit = configuration.get(EvalConstConfigurationKeys.STACK_SIZE_LIMIT) ?: 1000
+        val stackSizeLimit = configuration.get(EvalConstConfigurationKeys.STACK_SIZE_LIMIT) ?: 100
         IrGenerationExtension.registerExtension(EvalConstFunIrGenerationExtension(prefix, stepLimit, stackSizeLimit))
     }
 }

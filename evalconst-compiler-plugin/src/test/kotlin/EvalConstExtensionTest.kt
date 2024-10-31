@@ -57,6 +57,14 @@ class EvalConstExtensionTest {
         println(code)
     }
 
+    // Reference evaluator does not work here
+    @Test
+    fun exceedStepLimitTest() {
+        val result = compile(readTestFile("huge_loop.kt"))
+        val code = result.javaCode("MainKt")
+        println(code)
+    }
+
     @Test
     fun shadowingTest() {
         compareWithReference("shadowing.kt")

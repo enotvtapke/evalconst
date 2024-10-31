@@ -85,29 +85,21 @@ class ConstFunEvaluator(
         return env.inScope {
             while (loop.condition.accept(this, data).value as Boolean) {
                 loop.body!!.accept(this, data)
+                addStepAndCheck()
             }
             NULL_CONST
         }
     }
 
-    override fun visitBody(body: IrBody, data: Unit): IrConst<*> = evalStatements(body.statements).also {
-        statementNumber += body.statements.size
-        if (statementNumber > stepLimit) {
-            throw EvaluatorStatementsLimitException("Number of evaluated statements exceeds configured limit `$stepLimit`")
-        }
-    }
+    override fun visitBody(body: IrBody, data: Unit): IrConst<*> = evalStatements(body.statements)
 
-    override fun visitBlock(block: IrBlock, data: Unit): IrConst<*> = evalStatements(block.statements).also {
-        statementNumber += block.statements.size
-        if (statementNumber > stepLimit) {
-            throw EvaluatorStatementsLimitException("Number of evaluated statements exceeds configured limit `$stepLimit`")
-        }
-    }
+    override fun visitBlock(block: IrBlock, data: Unit): IrConst<*> = evalStatements(block.statements)
 
     override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: Unit): IrConst<*> =
         env.inScope {
             do {
                 loop.body!!.accept(this, data)
+                addStepAndCheck()
             } while (loop.condition.accept(this, data).value as Boolean)
             NULL_CONST
         }
@@ -120,7 +112,15 @@ class ConstFunEvaluator(
 
     private fun evalBody(body: IrBody): IrConst<*> = evalStatements(body.statements)
     private fun evalStatements(statements: List<IrStatement>): IrConst<*> =
-        statements.map { it.accept(this, Unit) }.last()
+        statements.map {
+            it.accept(this, Unit)
+        }.lastOrNull() ?: NULL_CONST
+
+    private fun addStepAndCheck() {
+        statementNumber += 1
+        if (statementNumber > stepLimit)
+            throw EvaluatorStatementsLimitException("Number of evaluated statements exceeds configured limit `$stepLimit`")
+    }
 
     private fun evalBuiltInFunction(call: IrCall): Any? {
         val irFunction = call.symbol.owner

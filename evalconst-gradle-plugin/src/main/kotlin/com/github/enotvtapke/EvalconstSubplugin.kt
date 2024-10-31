@@ -31,6 +31,5 @@ class EvalconstSubplugin : KotlinCompilerPluginSupportPlugin {
     override fun getPluginArtifact(): SubpluginArtifact = SubpluginArtifact(
         groupId = "com.github.enotvtapke",
         artifactId = "evalconst",
-        version = "1.0.01"
     )
 }

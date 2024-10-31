@@ -121,21 +121,23 @@ class ConstFunChecker(
         }
     }
 
-    private val allowedMethodsOnPrimitives = setOf(
-        "not", "unaryMinus", "unaryPlus", "inv",
-        "toString", "toChar", "toByte", "toShort", "toInt", "toLong", "toFloat", "toDouble",
-        "equals", "compareTo", "plus", "minus", "times", "div", "rem", "and", "or", "xor", "shl", "shr", "ushr",
-        "less", "lessOrEqual", "greater", "greaterOrEqual"
-    )
+    companion object {
+        private val allowedMethodsOnPrimitives = setOf(
+            "not", "unaryMinus", "unaryPlus", "inv",
+            "toString", "toChar", "toByte", "toShort", "toInt", "toLong", "toFloat", "toDouble",
+            "equals", "compareTo", "plus", "minus", "times", "div", "rem", "and", "or", "xor", "shl", "shr", "ushr",
+            "less", "lessOrEqual", "greater", "greaterOrEqual"
+        )
 
-    private val allowedMethodsOnStrings = setOf(
-        "<get-length>", "plus", "get", "compareTo", "equals", "toString"
-    )
+        private val allowedMethodsOnStrings = setOf(
+            "<get-length>", "plus", "get", "compareTo", "equals", "toString"
+        )
 
-    private val allowedBuiltinExtensionFunctions = listOf(
-        BuiltInOperatorNames.LESS, BuiltInOperatorNames.LESS_OR_EQUAL,
-        BuiltInOperatorNames.GREATER, BuiltInOperatorNames.GREATER_OR_EQUAL,
-        BuiltInOperatorNames.EQEQ, BuiltInOperatorNames.IEEE754_EQUALS,
-        BuiltInOperatorNames.ANDAND, BuiltInOperatorNames.OROR
-    ).map { IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier(it)).asString() }.toSet()
+        private val allowedBuiltinExtensionFunctions = listOf(
+            BuiltInOperatorNames.LESS, BuiltInOperatorNames.LESS_OR_EQUAL,
+            BuiltInOperatorNames.GREATER, BuiltInOperatorNames.GREATER_OR_EQUAL,
+            BuiltInOperatorNames.EQEQ, BuiltInOperatorNames.IEEE754_EQUALS,
+            BuiltInOperatorNames.ANDAND, BuiltInOperatorNames.OROR
+        ).map { IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier(it)).asString() }.toSet()
+    }
 }

@@ -18,17 +18,16 @@ class EvalConstFunIrGenerationExtension(private val prefix: String, private val 
 }
 
 private class ConstFunTransformer(
-    isEvalFunction: (IrFunction) -> Boolean,
-    stepLimit: Int,
-    stackSizeLimit: Int,
+    private val isEvalFunction: (IrFunction) -> Boolean,
+    private val stepLimit: Int,
+    private val stackSizeLimit: Int,
 ) : IrElementTransformerVoid() {
     private val checker = ConstFunChecker(isEvalFunction)
-    private val evaluator = ConstFunEvaluator(isEvalFunction, stepLimit, stackSizeLimit)
 
     override fun visitCall(expression: IrCall): IrExpression {
         if (expression.accept(checker, Unit)) {
             return try {
-                expression.accept(evaluator, Unit)
+                expression.accept(ConstFunEvaluator(isEvalFunction, stepLimit, stackSizeLimit), Unit)
             } catch (e: Exception) {
                 when (e) {
                     is EvaluatorStatementsLimitException, is EvaluatorStackSizeException -> super.visitCall(expression)
