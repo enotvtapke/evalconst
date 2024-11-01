@@ -26,7 +26,7 @@ Plugin has basic handling of too long loops and too deep recursion.
 * The number of statements that can be computed in compile time can be rescticted using `EVAL_LIMIT_OPTION` cli option.
 * The depth of recursion during computations in compile time can be rescticted using `STACK_LIMIT_OPTION` cli option.
 
-When one of these limits will be exceeded for certain "eval" function, this function will be left as is. 
+When one of these limits is exceeded for certain "eval" function, this function is left as is. 
 
 The main code is in: [evalconst-compiler-plugin/src/main/kotlin/com/github/enotvtapke/evalconst](evalconst-compiler-plugin/src/main/kotlin/com/github/enotvtapke/evalconst).
 
