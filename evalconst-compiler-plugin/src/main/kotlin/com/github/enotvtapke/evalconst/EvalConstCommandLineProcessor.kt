@@ -1,5 +1,6 @@
 package com.github.enotvtapke.evalconst
 
+import com.google.auto.service.AutoService
 import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
@@ -15,6 +16,7 @@ object EvalConstConfigurationKeys {
 }
 
 @OptIn(ExperimentalCompilerApi::class)
+@AutoService(CommandLineProcessor::class)
 class EvalConstCommandLineProcessor : CommandLineProcessor {
     companion object {
         val PREFIX_OPTION = CliOption(
@@ -42,7 +44,7 @@ class EvalConstCommandLineProcessor : CommandLineProcessor {
         )
     }
 
-    override val pluginId = "com.github.enotvtapke.evalconst"
+    override val pluginId = "com.github.enotvtapke.evalconst-compiler-plugin"
     override val pluginOptions = listOf(PREFIX_OPTION, EVAL_LIMIT_OPTION, STACK_LIMIT_OPTION)
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) =

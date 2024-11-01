@@ -20,16 +20,16 @@ class EvalconstSubplugin : KotlinCompilerPluginSupportPlugin {
         return project.provider {
             listOf(
                 SubpluginOption(key = "const-fun-prefix", value = extension.constFunctionPrefix),
-                SubpluginOption(key = "step-Limit", value = extension.stepNumberLimit.toString()),
-                SubpluginOption(key = "stack-Limit", value = extension.stackSizeLimit.toString()),
+                SubpluginOption(key = "step-limit", value = extension.stepNumberLimit.toString()),
+                SubpluginOption(key = "stack-limit", value = extension.stackSizeLimit.toString()),
             )
         }
     }
 
-    override fun getCompilerPluginId() = "com.github.enotvtapke.evalconst"
+    override fun getCompilerPluginId() = "com.github.enotvtapke.evalconst-compiler-plugin"
 
     override fun getPluginArtifact(): SubpluginArtifact = SubpluginArtifact(
         groupId = "com.github.enotvtapke",
-        artifactId = "evalconst",
+        artifactId = "evalconst-compiler-plugin",
     )
 }

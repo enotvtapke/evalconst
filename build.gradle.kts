@@ -1,12 +1,16 @@
 plugins {
     kotlin("jvm") version "2.0.21"
-    id("com.github.enotvtapke.evalconst") // TODO does no work for no reason
+    id("com.github.enotvtapke.evalconst")
 }
 
-group = "com.github.enovtapke"
-version = "1.0-SNAPSHOT"
+allprojects {
+    group = "com.github.enotvtapke"
+}
 
 repositories {
+    flatDir {
+        dirs("evalconst-compiler-plugin/build/libs")
+    }
     mavenCentral()
 }
 
@@ -22,4 +26,6 @@ tasks.test {
 
 evalconst {
     constFunctionPrefix = "eval"
+    stepNumberLimit = 1000_000_000
+    stackSizeLimit = 100
 }
