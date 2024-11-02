@@ -18,11 +18,11 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
 class ReferenceEvalConstFunIrGenerationExtension(private val prefix: String, private val limit: Int) : IrGenerationExtension {
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
-        moduleFragment.transform(MyConstEvaluator(prefix, limit, moduleFragment), null)
+        moduleFragment.transform(IrConstFileTransformer(prefix, limit, moduleFragment), null)
     }
 }
 
-private class MyConstEvaluator(
+private class IrConstFileTransformer(
     private val prefix: String,
     private val limit: Int,
     moduleFragment: IrModuleFragment,
